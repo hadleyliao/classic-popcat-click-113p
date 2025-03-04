@@ -4,6 +4,12 @@
 <head>
     <title>POPCAT CLASSIC</title>
     <style>
+
+        字型 sans-serif
+        body {
+            font-family: sans-serif;
+        }
+
         /*容器 box 高度100vh flex排版方向column 水平置中 不要垂直置中*/
         .container {
             display: flex;
@@ -11,19 +17,23 @@
             align-items: center;
             height: 100vh;
         }
+
         /*容器樣式 背景顏色 #bdaa90*/
         .container {
             background-color: #bdaa90;
         }
+
         /*標題 box 寬度80% 上方間距 2em*/
         .title {
             width: 80%;
             margin-top: 2em;
         }
+
         /*文字 box 寬度100%*/
         .cat-img {
             width: 100%;
         }
+
         /*文字樣式 文字置中 文字白色 大小80px -webkit-text-stroke 3px 黑色*/
         .cat-img {
             text-align: center;
@@ -31,6 +41,8 @@
             font-size: 80px;
             -webkit-text-stroke: 3px black;
         }
+
+        /*p 嘴巴關閉*/
         /*文字 div 背景圖片 用 id 設定imgs/p.png 圖片靠下 填滿容器contain 不重複*/
         #p {
             background-image: url('imgs/p.png');
@@ -39,11 +51,39 @@
             background-repeat: no-repeat;
         }
 
+        /*op 嘴巴打開*/
+        /*新贈文字 div 背景圖片 用 id=op 設定 imgs/op.png*/
+        #op {
+            background-image: url('imgs/op.png');
+            background-position: center bottom;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
 
+        /*body box 編距為0*/
+        body {
+            margin: 0;
+        }
 
+        /*文字 div 排版填滿剩餘空間*/
+        .cat-img {
+           flex: 1;
+        }
 
+        /*防止文字被選取*/
+        .cat-img {
+            user-select: none;
+        }
 
-        
+        /*標題 box 最大寬度 600px*/
+        .title {
+            max-width: 600px;
+        }
+
+        /*文字 box 最大寬度 800px*/
+        .cat-img {
+            max-width: 800px;
+        }
 
     </style>
 </head>
@@ -52,7 +92,8 @@
 <!--新增容器去包裹標題圖片與點擊數-->
 <div class="container">
     <img class="title" src="imgs/popcat.svg" alt="POPCAT">
-    <div class="cat-img" id="p">0</div>
+    <div class="cat-img" id="op">0</div>
+<!--  上一行 id="op" 或者 id="p" 是代表切換貓咪嘴巴打開 跟 關閉  -->
 </div>
 </body>
 </html>
