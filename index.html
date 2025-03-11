@@ -1,99 +1,166 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <title>POPCAT CLASSIC</title>
     <style>
 
-        字型 sans-serif
+        /* 1. 基本設定 */
         body {
+            /* 移除預設邊距 */
+            margin: 0;
+            /* 設定字體 */
             font-family: sans-serif;
         }
 
-        /*容器 box 高度100vh flex排版方向column 水平置中 不要垂直置中*/
         .container {
+            /* 設定背景色 */
+            background-color: #bdaa90;
+            /* 防止文字被選取 */
+            user-select: none;
+
+            /* 讓內容佔滿整個視窗 */
+            height: 100vh;
+
+            /* 垂直排列內容 */
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100vh;
         }
 
-        /*容器樣式 背景顏色 #bdaa90*/
-        .container {
-            background-color: #bdaa90;
-        }
-
-        /*標題 box 寬度80% 上方間距 2em*/
+        /* 2. 標題圖片 */
         .title {
-            width: 80%;
+            /* 上方間距 */
             margin-top: 2em;
-        }
 
-        /*文字 box 寬度100%*/
-        .cat-img {
-            width: 100%;
-        }
-
-        /*文字樣式 文字置中 文字白色 大小80px -webkit-text-stroke 3px 黑色*/
-        .cat-img {
-            text-align: center;
-            color: white;
-            font-size: 80px;
-            -webkit-text-stroke: 3px black;
-        }
-
-        /*p 嘴巴關閉*/
-        /*文字 div 背景圖片 用 id 設定imgs/p.png 圖片靠下 填滿容器contain 不重複*/
-        #p {
-            background-image: url('imgs/p.png');
-            background-position: center bottom;
-            background-size: contain;
-            background-repeat: no-repeat;
-        }
-
-        /*op 嘴巴打開*/
-        /*新贈文字 div 背景圖片 用 id=op 設定 imgs/op.png*/
-        #op {
-            background-image: url('imgs/op.png');
-            background-position: center bottom;
-            background-size: contain;
-            background-repeat: no-repeat;
-        }
-
-        /*body box 編距為0*/
-        body {
-            margin: 0;
-        }
-
-        /*文字 div 排版填滿剩餘空間*/
-        .cat-img {
-           flex: 1;
-        }
-
-        /*防止文字被選取*/
-        .cat-img {
-            user-select: none;
-        }
-
-        /*標題 box 最大寬度 600px*/
-        .title {
+            /* 寬度設定 */
+            width: 80%;
             max-width: 600px;
         }
 
-        /*文字 box 最大寬度 800px*/
+        /* 3. 貓咪圖片 */
         .cat-img {
+            /* 填滿剩餘空間 */
+            flex: 1;
+
+            /* 寬度設定 */
+            width: 100%;
             max-width: 800px;
+
+            /* 背景圖片設定 */
+            background-position: bottom;
+            background-size: contain;
+            background-repeat: no-repeat;
+
+            /* 文字置中 */
+            text-align: center;
+            /* 文字樣式 */
+            color: white;
+            font-size: 80px;
+            font-weight: 900;
+            -webkit-text-stroke: 3px black;
+
+        }
+
+        /* 4. 貓咪狀態 */
+        #p {
+            background-image: url("imgs/p.png");
+        }
+        #op {
+            background-image: url("imgs/op.png");
         }
 
     </style>
+
 </head>
 
 <body>
-<!--新增容器去包裹標題圖片與點擊數-->
 <div class="container">
     <img class="title" src="imgs/popcat.svg" alt="POPCAT">
-    <div class="cat-img" id="op">0</div>
-<!--  上一行 id="op" 或者 id="p" 是代表切換貓咪嘴巴打開 跟 關閉  -->
+    <div class="cat-img" id="p">0202</div>
 </div>
+<script>
+    // 預加載替代的貓咪圖片
+    const preload = new Image();
+    preload.src = "imgs/op.png";
+
+    // 獲取貓咪元素
+    const cat = document.getElementById("p");
+
+    // 點擊音效陣列
+    const pops = [
+        "pops/pop1.mp3",
+        "pops/pop2.mp3",
+        "pops/pop3.mp3",
+        "pops/pop4.mp3"
+    ];
+    let popIndex = 0;
+
+    /**
+     * Cookie 工具函數
+     */
+// 獲取 Cookie
+    function getCookie(cookieName) {
+        const name = cookieName + "=";
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const cookieArray = decodedCookie.split(';');
+
+        for (let i = 0; i < cookieArray.length; i++) {
+            let cookie = cookieArray[i];
+
+            // 去除空白字符
+            while (cookie.charAt(0) === ' ') {
+                cookie = cookie.substring(1);
+            }
+
+            if (cookie.indexOf(name) === 0) {
+                return cookie.substring(name.length, cookie.length);
+            }
+        }
+        return "";
+    }
+
+    // 設置 Cookie
+    function setCookie(cookieName, cookieValue, expirationDays) {
+        const date = new Date();
+        date.setTime(date.getTime() + (expirationDays * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + date.toUTCString();
+        document.cookie = cookieName + "=" + cookieValue + ";" + expires + ";path=/";
+    }
+
+    // 獲取點擊計數並初始化顯示
+    let popCount = getCookie("pop_count") || 0;
+    cat.innerHTML = popCount > 0 ? popCount : "";
+
+    /**
+     * 貓咪動作函數
+     */
+// 張嘴函數 - 當按下時執行
+    const openMouth = function() {
+        // 更改貓咪圖片 ID 為張嘴狀態
+        cat.id = "op";
+
+        // 播放點擊音效
+        const audio = new Audio(pops[popIndex]);
+        audio.load();
+        audio.play();
+
+        // 更新下一個音效索引
+        popIndex = (popIndex + 1) % pops.length;
+
+        // 增加點擊計數並更新顯示
+        popCount++;
+        cat.innerHTML = popCount;
+        setCookie("pop_count", popCount, 365);
+    };
+
+    // 閉嘴函數 - 當釋放時執行
+    const closeMouth = () => setTimeout(() => cat.id = "p", 25);
+
+    // 事件監聽器
+    document.addEventListener("pointerup", closeMouth);   // 釋放指針時閉嘴
+    document.addEventListener("keyup", closeMouth);       // 釋放按鍵時閉嘴
+    document.addEventListener("pointerdown", openMouth);  // 按下指針時張嘴
+    document.addEventListener("keydown", openMouth);      // 按下按鍵時張嘴
+</script>
 </body>
 </html>
